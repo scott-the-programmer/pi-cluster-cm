@@ -11,4 +11,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Run tests
+      run: pip install -r requirements.txt
+
+    - name: Run tests
       run: cd k3s-setup && make test
