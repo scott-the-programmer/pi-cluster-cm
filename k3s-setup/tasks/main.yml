@@ -1,0 +1,45 @@
+---
+- name: Update APT package cache
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+  changed_when: False
+
+- name: Ensure dependencies are installed
+  apt:
+    name:
+      - curl
+      - openssl
+    state: present
+
+- name: Check if k3s is installed
+  command: k3s --version
+  register: k3s_version
+  changed_when: False
+  failed_when: False
+
+- name: Download and install k3s
+  shell: |
+    curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.5+k3s2 sh -
+  when: "'v1.21.5+k3s2' not in k3s_version.stdout"
+
+- name: Ensure k3s is started and enabled at boot
+  systemd:
+    name: k3s
+    enabled: yes
+    state: started
+
+- name: Get node token from the master
+  command: cat /var/lib/rancher/k3s/server/node-token
+  register: master_token
+  when: "'raspberry1' in inventory_hostname"
+
+- name: Store the node token
+  set_fact:
+    node_token: "{{ master_token.stdout }}"
+  when: "'raspberry1' in inventory_hostname"
+
+- name: Join raspberry2 to the cluster
+  shell: |
+    curl -sfL https://get.k3s.io | K3S_URL=https://{{ hostvars['raspberry1'].ansible_host }}:6443 K3S_TOKEN={{ node_token }} sh -
+  when: "'raspberry2' in inventory_hostname"

@@ -1,0 +1,23 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: ubuntu-local:20.04
+    pre_build_image: true
+    privileged: true
+    cgroup_parent: docker.slice
+    cgroupns_mode: private
+    override_command: false
+    capabilities:
+      - SYS_ADMIN
+    security_opts:
+      - seccomp=unconfined
+    tmpfs:
+      - /run
+      - /tmp
+      - /run/lock
+provisioner:
+  name: ansible
