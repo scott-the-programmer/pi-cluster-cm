@@ -1,0 +1,34 @@
+---
+- name: Update APT package cache
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+  changed_when: False
+
+- name: Ensure dependencies are installed
+  apt:
+    name:
+      - curl
+      - openssl
+    state: present
+
+- name: Download and install k3s with custom args
+  changed_when: False
+  shell: |
+    curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.5+k3s2 INSTALL_K3S_EXEC="server --snapshotter=native" sh -
+
+- name: Ensure k3s is started and enabled at boot
+  systemd:
+    name: k3s
+    enabled: yes
+    state: started
+
+- name: Fetch k3s token from master
+  become: yes
+  command: cat /var/lib/rancher/k3s/server/node-token
+  register: server_token
+  changed_when: False
+
+- name: Set the token as a fact
+  set_fact:
+    k3s_token: "{{ server_token.stdout }}"

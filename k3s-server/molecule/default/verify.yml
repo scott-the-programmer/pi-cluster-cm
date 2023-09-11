@@ -1,0 +1,58 @@
+---
+- name: Check k3s installation
+  hosts: all
+  tasks:
+    - name: Check if curl is installed
+      command: which curl
+      changed_when: false
+
+    - name: Check if openssl is installed
+      command: which openssl
+      changed_when: false
+
+    - name: Check if k3s is installed
+      command: which k3s
+      changed_when: false
+
+- name: Verify k3s service
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Check if k3s service is running
+      command: systemctl is-active k3s
+      register: k3s_service_status
+      failed_when: k3s_service_status.stdout != 'active'
+      changed_when: false
+
+- name: Verify k3s server
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Get k3s nodes
+      command: k3s kubectl get nodes -o jsonpath='{.items[*].status.conditions[?(@.type=="Ready")].status}'
+      register: k3s_nodes_ready_status
+      changed_when: false
+      
+    - name: Deploy a test nginx deployment
+      command: k3s kubectl create deployment nginx --image=nginx
+      changed_when: false
+
+    - name: Expose nginx deployment
+      command: k3s kubectl expose deployment nginx --port=80 --type=ClusterIP
+      changed_when: false
+
+    - name: Get pods for nginx deployment
+      command: k3s kubectl get pods -l app=nginx -o jsonpath='{.items[*].status.phase}'
+      register: nginx_pod_status
+      retries: 5
+      delay: 10
+      until: "'Running' in nginx_pod_status.stdout"
+      changed_when: false
+      
+    - name: Cleanup test nginx deployment
+      command: k3s kubectl delete deployment nginx
+      changed_when: false
+      
+    - name: Cleanup test nginx service
+      command: k3s kubectl delete service nginx
+      changed_when: false

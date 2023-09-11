@@ -1,0 +1,24 @@
+---
+- name: Update APT package cache
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+  changed_when: False
+
+- name: Ensure dependencies are installed
+  apt:
+    name:
+      - curl
+      - openssl
+    state: present
+
+- name: Download and install k3s agent with custom args and server details
+  changed_when: False
+  shell: |
+    curl -sfL https://get.k3s.io | K3S_URL=https://{{ k3s_server_ip }}:6443 K3S_TOKEN={{ k3s_token }} INSTALL_K3S_EXEC="agent --snapshotter=native" sh -
+
+- name: Ensure k3s agent is started and enabled at boot
+  systemd:
+    name: k3s-agent
+    enabled: yes
+    state: started

@@ -13,5 +13,8 @@ jobs:
     - name: Install dependencies
       run: pip install -r requirements.txt
 
-    - name: Run tests
-      run: cd k3s-setup && make test
+    - name: Test server role
+      run: cd k3s-server && make test
+
+    - name: Test agent role
+      run: cd k3s-agent && make test

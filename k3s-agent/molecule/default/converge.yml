@@ -1,0 +1,14 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Include k3s-server
+      include_tasks: ../../../k3s-server/tasks/main.yml
+      when: "'server' in inventory_hostname"
+
+    - name: Include k3s-agent
+      include_tasks: ../../tasks/main.yml
+      when: inventory_hostname != 'server'
+      vars:
+        k3s_server_ip: "{{ hostvars['server']['ansible_default_ipv4']['address'] }}"
+        k3s_token: "{{ hostvars['server']['k3s_token'] }}" 
