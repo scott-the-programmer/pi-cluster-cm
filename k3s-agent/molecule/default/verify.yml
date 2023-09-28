@@ -15,11 +15,11 @@
       changed_when: false
 
 - name: Verify
-  hosts: all
+  hosts: agent
   gather_facts: false
   tasks:
     - name: Check if k3s service is running
-      command: systemctl is-active k3s
+      command: systemctl is-active k3s-agent
       register: k3s_service_status
       failed_when: k3s_service_status.stdout != 'active'
       changed_when: false
