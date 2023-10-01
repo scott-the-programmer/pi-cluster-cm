@@ -13,6 +13,10 @@ jobs:
     - name: Install dependencies
       run: pip install -r requirements.txt
 
+    - name: Debug $PATH
+      shell: bash
+      run: echo $PATH
+
     - name: Test server role
       shell: bash
       run: cd k3s-server && make test
