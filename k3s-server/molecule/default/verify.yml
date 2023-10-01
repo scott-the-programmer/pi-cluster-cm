@@ -44,8 +44,8 @@
     - name: Get pods for nginx deployment
       command: k3s kubectl get pods -l app=nginx -o jsonpath='{.items[*].status.phase}'
       register: nginx_pod_status
-      retries: 5
-      delay: 10
+      retries: 30
+      delay: 20
       until: "'Running' in nginx_pod_status.stdout"
       changed_when: false
       
