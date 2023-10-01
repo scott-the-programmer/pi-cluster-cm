@@ -14,7 +14,9 @@ jobs:
       run: pip install -r requirements.txt
 
     - name: Test server role
+      shell: bash
       run: cd k3s-server && make test
 
     - name: Test agent role
+      shell: bash
       run: cd k3s-agent && make test
