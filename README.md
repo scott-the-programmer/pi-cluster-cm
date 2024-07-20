@@ -1,6 +1,6 @@
 # Raspberry Pi K3s Cluster Setup
 
-This project provides Ansible scripts to set up a [K3s](https://k3s.io/) Kubernetes cluster on Raspberry Pis.
+This project provides Ansible scripts to set up a [K3s](https://k3s.io/) Kubernetes cluster on Raspberry PIs.
 
 ## Requirements
 
@@ -12,12 +12,12 @@ This project provides Ansible scripts to set up a [K3s](https://k3s.io/) Kuberne
 
 1. Clone this repository:
 
-2. Update the Ansible inventory with the IP addresses of your Raspberry Pi devices.
+2. Create inventory.yml with the IP addresses of your Raspberry Pi devices.
 
 3. Run the Ansible playbook:
 
 ```bash
-ansible-playbook setup.yml
+ansible-playbook -i inventory.yml playbook.yml
 ```
 
 ## Features
