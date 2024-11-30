@@ -38,3 +38,5 @@ platforms:
 
 provisioner:
   name: ansible
+  options:
+    skip-tags: modify_cmdline
