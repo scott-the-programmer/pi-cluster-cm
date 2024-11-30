@@ -28,10 +28,10 @@
   when: 
     - cmdline_updated.changed
 
-- name: Download and install k3s agent with custom args and server details
+- name: Download and install k3s agent with custom args, server details, and node ID
   changed_when: False
   shell: |
-    curl -sfL https://get.k3s.io | K3S_URL=https://{{ k3s_server_ip }}:6443 K3S_TOKEN={{ k3s_token }} INSTALL_K3S_EXEC="agent --snapshotter=native" sh -
+    curl -sfL https://get.k3s.io | K3S_URL=https://{{ k3s_server_ip }}:6443 K3S_TOKEN={{ k3s_token }} INSTALL_K3S_EXEC="agent --snapshotter=native --node-name={{ inventory_hostname }}" sh -
 
 - name: Ensure k3s agent is started and enabled at boot
   systemd:
