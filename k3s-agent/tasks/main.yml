@@ -10,6 +10,7 @@
     name:
       - curl
       - openssl
+      - iptables
     state: present
 
 - name: Add cgroup parameters to cmdline.txt
