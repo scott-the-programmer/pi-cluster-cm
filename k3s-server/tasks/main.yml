@@ -31,7 +31,7 @@
 - name: Download and install k3s with custom args
   changed_when: False
   shell: |
-    curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.5+k3s2 INSTALL_K3S_EXEC="server --snapshotter=native" sh -
+    curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --snapshotter=native" sh -
 
 - name: Ensure k3s is started and enabled at boot
   systemd:
